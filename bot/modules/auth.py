@@ -15,8 +15,6 @@ def authorize(update, context):
         user_id = int(message_[1])
         if user_id in AUTHORIZED_CHATS:
             msg = 'Already authorized'
-            msg = db.auth_user(user_id)
-            AUTHORIZED_CHATS.add(user_id)
         else:
             AUTHORIZED_CHATS.add(user_id)
             with open('authorized_chats.txt', 'a') as file:
@@ -27,8 +25,6 @@ def authorize(update, context):
         chat_id = update.effective_chat.id
         if chat_id in AUTHORIZED_CHATS:
             msg = 'Already authorized'
-            msg = db.auth_user(chat_id)
-            AUTHORIZED_CHATS.add(chat_id)
         else:
             AUTHORIZED_CHATS.add(chat_id)
             with open('authorized_chats.txt', 'a') as file:
@@ -39,8 +35,6 @@ def authorize(update, context):
         user_id = reply_message.from_user.id
         if user_id in AUTHORIZED_CHATS:
             msg = 'Already authorized'
-            msg = db.auth_user(user_id)
-            AUTHORIZED_CHATS.add(user_id)
         else:
             AUTHORIZED_CHATS.add(user_id)
             with open('authorized_chats.txt', 'a') as file:
@@ -57,7 +51,6 @@ def unauthorize(update, context):
         # Trying to unauthorize an user in private
         user_id = int(message_[1])
         if user_id in AUTHORIZED_CHATS:
-  
             else:
                 msg = 'Authorization revoked'
             AUTHORIZED_CHATS.remove(user_id)
