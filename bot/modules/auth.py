@@ -82,12 +82,15 @@ def sendAuthChats(update,context):
     sendMessage(f'Authorized Chats are : \n<code>{users}</code>\n', context.bot, update)
 
 
+send_auth_handler = CommandHandler(command=BotCommands.AuthorizedUsersCommand, callback=sendAuthChats,
+                                    filters=CustomFilters.owner_filter)
 authorize_handler = CommandHandler(command=BotCommands.AuthorizeCommand, callback=authorize,
-                                    filters=CustomFilters.owner_filter, run_async=True)
-unauthorize_handler = CommandHandler(command=BotCommands.UnauthorizeCommand, callback=unauthorize,
-                                    filters=CustomFilters.owner_filter, run_async=True)
-auth_handler = CommandHandler(BotCommands.UsersCommand, auth_chats,
-                              filters=CustomFilters.owner_filter, run_async=True)
+                                   filters=CustomFilters.owner_filter)
+unauthorize_handler = CommandHandler(command=BotCommands.UnAuthorizeCommand, callback=unauthorize,
+                                     filters=CustomFilters.owner_filter)
+
+dispatcher.add_handler(send_auth_handler)
 dispatcher.add_handler(authorize_handler)
 dispatcher.add_handler(unauthorize_handler)
-dispatcher.add_handler(auth_handler)
+
+
