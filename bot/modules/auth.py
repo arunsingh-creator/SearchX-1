@@ -1,10 +1,9 @@
 from telegram.ext import CommandHandler
 
-from bot import AUTHORIZED_CHATS, DATABASE_URL, dispatcher
+from bot import AUTHORIZED_CHATS, dispatcher
 from bot.helper.telegram_helper.bot_commands import BotCommands
 from bot.helper.telegram_helper.filters import CustomFilters
 from bot.helper.telegram_helper.message_utils import sendMessage
-from bot.helper.ext_utils.database import DatabaseHelper
 
 def authorize(update, context):
     reply_message = None
@@ -16,8 +15,6 @@ def authorize(update, context):
         user_id = int(message_[1])
         if user_id in AUTHORIZED_CHATS:
             msg = 'Already authorized'
-        elif DATABASE_URL is not None:
-            db = DatabaseHelper()
             msg = db.auth_user(user_id)
             AUTHORIZED_CHATS.add(user_id)
         else:
@@ -30,8 +27,6 @@ def authorize(update, context):
         chat_id = update.effective_chat.id
         if chat_id in AUTHORIZED_CHATS:
             msg = 'Already authorized'
-        elif DATABASE_URL is not None:
-            db = DatabaseHelper()
             msg = db.auth_user(chat_id)
             AUTHORIZED_CHATS.add(chat_id)
         else:
@@ -44,8 +39,6 @@ def authorize(update, context):
         user_id = reply_message.from_user.id
         if user_id in AUTHORIZED_CHATS:
             msg = 'Already authorized'
-        elif DATABASE_URL is not None:
-            db = DatabaseHelper()
             msg = db.auth_user(user_id)
             AUTHORIZED_CHATS.add(user_id)
         else:
@@ -64,9 +57,7 @@ def unauthorize(update, context):
         # Trying to unauthorize an user in private
         user_id = int(message_[1])
         if user_id in AUTHORIZED_CHATS:
-            if DATABASE_URL is not None:
-                db = DatabaseHelper()
-                msg = db.unauth_user(user_id)
+  
             else:
                 msg = 'Authorization revoked'
             AUTHORIZED_CHATS.remove(user_id)
@@ -76,9 +67,6 @@ def unauthorize(update, context):
         # Trying to unauthorize a chat
         chat_id = update.effective_chat.id
         if chat_id in AUTHORIZED_CHATS:
-            if DATABASE_URL is not None:
-                db = DatabaseHelper()
-                msg = db.unauth_user(chat_id)
             else:
                 msg = 'Authorization revoked'
             AUTHORIZED_CHATS.remove(chat_id)
@@ -88,15 +76,11 @@ def unauthorize(update, context):
         # Trying to unauthorize an user by replying
         user_id = reply_message.from_user.id
         if user_id in AUTHORIZED_CHATS:
-            if DATABASE_URL is not None:
-                db = DatabaseHelper()
-                msg = db.unauth_user(user_id)
             else:
                 msg = 'Authorization revoked'
             AUTHORIZED_CHATS.remove(user_id)
         else:
             msg = 'Already unauthorized'
-    if DATABASE_URL is None:
         with open('authorized_chats.txt', 'a') as file:
             file.truncate(0)
             for i in AUTHORIZED_CHATS:
